@@ -3,6 +3,7 @@
 export PATH="$HOME/.bun/bin:$PATH"
 # Set OPENROUTER_API_KEY in your environment or ~/.bashrc
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+WORK_DIR="$(pwd)"
 
 # Handle restart command for web UI
 if [ "$1" = "restart" ]; then
@@ -24,4 +25,4 @@ if [ "$1" = "stop" ]; then
 fi
 
 cd "$SCRIPT_DIR/packages/opencode"
-exec bun run --conditions=browser src/index.ts "$@"
+exec bun run --conditions=browser src/index.ts "$WORK_DIR" "$@"
