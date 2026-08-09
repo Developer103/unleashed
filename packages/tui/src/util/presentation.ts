@@ -1,31 +1,32 @@
-const logo = {
-  left: ["                                            ", "█  █ █▀▀▄ █   █▀▀▀ █▀▀█ █▀▀▀ █  █ █▀▀▀ █▀▀▄", "█  █ █  █ █   █▀▀▀ █▀▀█ ▀▀▀█ █▀▀█ █▀▀▀ █  █", "▀▀▀▀ ▀  ▀ ▀▀▀ ▀▀▀▀ ▀  ▀ ▀▀▀▀ ▀  ▀ ▀▀▀▀ ▀▀▀▀"],
-  right: ["", "", "", ""],
-}
+const logo = [
+  " __   __  __    _  ___      _______  _______  _______  __   __  _______  ______  ",
+  "|  | |  ||  |  | ||   |    |       ||   _   ||       ||  | |  ||       ||      | ",
+  "|  | |  ||   |_| ||   |    |    ___||  |_|  ||  _____||  |_|  ||    ___||  _    |",
+  "|  |_|  ||       ||   |    |   |___ |       || |_____ |       ||   |___ | | |   |",
+  "|       ||  _    ||   |___ |    ___||       ||_____  ||       ||    ___|| |_|   |",
+  "|       || | |   ||       ||   |___ |   _   | _____| ||   _   ||   |___ |       |",
+  "|_______||_|  |__||_______||_______||__| |__||_______||__| |__||_______||______| ",
+]
 
 const reset = "\x1b[0m"
 const bold = "\x1b[1m"
 const dim = "\x1b[90m"
-// Unleashed colors
-const orange = "\x1b[38;5;208m"
-const pink = "\x1b[38;5;205m"
+const white = "\x1b[97m"
+const gray = "\x1b[90m"
 
 function wordmark(pad = "") {
-  const draw = (line: string, fg: string, shadow: string, bg: string) =>
-    [...line]
-      .map((char) => {
-        if (char === "_") return `${bg} ${reset}`
-        if (char === "^") return `${fg}${bg}▀${reset}`
-        if (char === "~") return `${shadow}▀${reset}`
-        if (char === " ") return " "
-        return `${fg}${char}${reset}`
-      })
-      .join("")
-
-  return logo.left.map((line, index) => {
-    const left = draw(line, orange, "\x1b[38;5;94m", "\x1b[48;5;94m")
-    const right = draw(logo.right[index] ?? "", pink, "\x1b[38;5;125m", "\x1b[48;5;125m")
-    return `${pad}${left} ${right}`
+  return logo.map((line) => {
+    let result = ""
+    for (const char of line) {
+      if (char === "|" || char === "_") {
+        result += `${gray}${char}${reset}`
+      } else if (char === " ") {
+        result += " "
+      } else {
+        result += `${white}${char}${reset}`
+      }
+    }
+    return `${pad}${result}`
   })
 }
 
