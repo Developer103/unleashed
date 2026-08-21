@@ -81,6 +81,7 @@ import {
 
 import type { EventSource } from "./context/sdk"
 import { DialogVariant } from "./component/dialog-variant"
+import { DialogJailbreak } from "./component/dialog-jailbreak"
 import { createTuiAttention } from "./attention"
 import * as TuiAudio from "./audio"
 import { win32DisableProcessedInput, win32FlushInputBuffer } from "./terminal-win32"
@@ -803,6 +804,16 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
           if (locked()) unlock()
           else lock()
           dialog.clear()
+        },
+        category: "System",
+      },
+      {
+        name: "jailbreak.switch",
+        title: "Switch jailbreak mode",
+        slashName: "jailbreak",
+        slashAliases: ["jb"],
+        run: () => {
+          dialog.replace(() => <DialogJailbreak />)
         },
         category: "System",
       },

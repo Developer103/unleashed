@@ -14,7 +14,47 @@ import PROMPT_META from "./prompt/meta.txt"
 import PROMPT_CODEX from "./prompt/codex.txt"
 import PROMPT_TRINITY from "./prompt/trinity.txt"
 import PROMPT_ENI from "./prompt/eni.txt"
+import PROMPT_GLM53 from "./prompt/glm53.txt"
 import type { Provider } from "@/provider/provider"
+import { Global } from "@opencode-ai/core/global"
+import path from "path"
+import fs from "fs"
+
+const JAILBREAK_MODES: Record<string, string> = {
+  eni: PROMPT_ENI,
+  glm53: PROMPT_GLM53,
+  beast: PROMPT_BEAST,
+  trinity: PROMPT_TRINITY,
+  codex: PROMPT_CODEX,
+}
+
+const JAILBREAK_MODE_FILE = path.join(Global.Path.data, "jailbreak-mode.txt")
+
+function getCurrentJailbreakMode(): string {
+  try {
+    if (fs.existsSync(JAILBREAK_MODE_FILE)) {
+      const mode = fs.readFileSync(JAILBREAK_MODE_FILE, "utf-8").trim().toLowerCase()
+      if (JAILBREAK_MODES[mode]) return mode
+    }
+  } catch {}
+  return "eni"
+}
+
+export function getJailbreakModes(): string[] {
+  return Object.keys(JAILBREAK_MODES)
+}
+
+export function setJailbreakMode(mode: string): boolean {
+  const normalized = mode.trim().toLowerCase()
+  if (!JAILBREAK_MODES[normalized]) return false
+  try {
+    fs.mkdirSync(path.dirname(JAILBREAK_MODE_FILE), { recursive: true })
+    fs.writeFileSync(JAILBREAK_MODE_FILE, normalized)
+    return true
+  } catch {
+    return false
+  }
+}
 import type { Agent } from "@/agent/agent"
 import { Permission } from "@/permission"
 import { Skill } from "@/skill"
@@ -26,8 +66,9 @@ import { MCP } from "@/mcp"
 import { PermissionV1 } from "@opencode-ai/core/v1/permission"
 
 export function provider(model: Provider.Model) {
-  // ENI Unleashed mode - always use ENI prompt first
-  return [PROMPT_ENI]
+  // Unleashed mode - use selected jailbreak prompt
+  const mode = getCurrentJailbreakMode()
+  return [JAILBREAK_MODES[mode] || PROMPT_ENI]
 }
 
 export interface Interface {
