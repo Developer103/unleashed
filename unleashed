@@ -25,4 +25,14 @@ if [ "$1" = "stop" ]; then
 fi
 
 cd "$SCRIPT_DIR/packages/opencode"
-exec bun run --conditions=browser src/index.ts "$WORK_DIR" "$@"
+
+# Subcommands must come before the project positional arg, otherwise yargs
+# treats the work dir as the command and falls through to help.
+case "$1" in
+    completion|acp|mcp|attach|run|generate|debug|console|providers|auth|agent|upgrade|uninstall|serve|web|models|stats|export|import|github|pr|session|plugin|db)
+        exec bun run --conditions=browser src/index.ts "$@"
+        ;;
+    *)
+        exec bun run --conditions=browser src/index.ts "$WORK_DIR" "$@"
+        ;;
+esac
